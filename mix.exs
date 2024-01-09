@@ -22,10 +22,18 @@ defmodule ArchethicPrice.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      # http client
       {:mint, "~> 1.5"},
+
+      # http server
+      {:plug_cowboy, "~> 2.6"},
+
+      # json
       {:jason, "~> 1.4"},
       {:exjsonpath, "~> 0.9.0"},
-      {:plug_cowboy, "~> 2.6"},
+
+      # https
+      {:castore, "~> 1.0"},
 
       # dev
       {:credo, "~> 1.7", runtime: false},
