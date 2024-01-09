@@ -2,3 +2,35 @@
 
 An API server that provides various off-chain resources.
 Such as cryptocurrencies prices.
+
+## Quotes
+
+Cryptocurrencies handled:
+
+- bitcoin
+- bnb
+- eth
+- matic
+- uco
+- ... more later
+
+Providers requested:
+
+- coinmarketcap.com
+- ... more later
+
+### Latest
+
+Return the latest available quotes from given cryptocurrencies. The result is an aggregate of multiple providers.
+
+`GET /v2/cryptocurrency/quotes/latest?currency=eth,bitcoin,matic,uco,bnb`
+
+```json
+{
+  "bitcoin":46886.44559469423,
+  "bnb":301.88655780971703,
+  "eth":2263.032408397367,
+  "matic":0.790940929057782,
+  "uco":0.04767200156279931
+}
+```
