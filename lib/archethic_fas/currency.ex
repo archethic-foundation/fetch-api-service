@@ -1,9 +1,9 @@
-defmodule ArchethicPrice.Currency do
+defmodule ArchethicFAS.Currency do
   @moduledoc """
   Everything related to currency
   """
 
-  @ucids Application.compile_env!(:archethic_price, :ucids)
+  @ucids Application.compile_env!(:archethic_fas, :ucids)
 
   @type t :: :eth | :bnb | :matic | :bitcoin | :uco
 

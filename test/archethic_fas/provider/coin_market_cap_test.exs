@@ -1,10 +1,10 @@
-defmodule ArchethicPrice.Provider.CoinMarketCapTest do
+defmodule ArchethicFAS.Provider.CoinMarketCapTest do
   @moduledoc """
   These tests are running on the sandbox-api from CMC.
   Real HTTP queries are done.
   """
   use ExUnit.Case
-  alias ArchethicPrice.Provider.CoinMarketCap
+  alias ArchethicFAS.Provider.CoinMarketCap
 
   describe "get_current/1" do
     test "empty list should return an empty response" do

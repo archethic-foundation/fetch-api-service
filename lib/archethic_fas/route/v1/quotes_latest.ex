@@ -1,8 +1,8 @@
-defmodule ArchethicPrice.Route.V1.QuotesLatest do
+defmodule ArchethicFAS.Route.V1.QuotesLatest do
   @moduledoc """
   Return the latest quotes for given currencies
   """
-  alias ArchethicPrice.Currency
+  alias ArchethicFAS.Currency
 
   require Logger
   import Plug.Conn
@@ -19,7 +19,7 @@ defmodule ArchethicPrice.Route.V1.QuotesLatest do
       |> Enum.map(&String.trim/1)
 
     with {:ok, currencies} <- Currency.cast_many(currencies_str),
-         {:ok, quotes} <- ArchethicPrice.get_current(currencies) do
+         {:ok, quotes} <- ArchethicFAS.get_current(currencies) do
       conn
       |> put_resp_content_type("application/json")
       |> send_resp(200, Jason.encode!(quotes))

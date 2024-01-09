@@ -1,9 +1,9 @@
-defmodule ArchethicPrice.MixProject do
+defmodule ArchethicFAS.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :archethic_price,
+      app: :archethic_fas,
       version: "0.1.0",
       elixir: "~> 1.14",
       start_permanent: Mix.env() == :prod,
@@ -15,7 +15,7 @@ defmodule ArchethicPrice.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ArchethicPrice.Application, []}
+      mod: {ArchethicFAS.Application, []}
     ]
   end
 

@@ -1,4 +1,4 @@
-defmodule ArchethicPrice do
+defmodule ArchethicFAS do
   @moduledoc false
 
   alias __MODULE__.Currency

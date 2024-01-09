@@ -1,12 +1,12 @@
-defmodule ArchethicPrice.Provider.CoinMarketCap do
+defmodule ArchethicFAS.Provider.CoinMarketCap do
   @moduledoc false
 
-  alias ArchethicPrice.Currency
-  alias ArchethicPrice.Provider
+  alias ArchethicFAS.Currency
+  alias ArchethicFAS.Provider
 
   @behaviour Provider
 
-  @config Application.compile_env!(:archethic_price, __MODULE__)
+  @config Application.compile_env!(:archethic_fas, __MODULE__)
 
   @doc """
   Return the latest quotes of given currencies on this provider
