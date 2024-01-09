@@ -8,8 +8,7 @@ defmodule ArchethicPrice.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      # Starts a worker by calling: ArchethicPrice.Worker.start_link(arg)
-      # {ArchethicPrice.Worker, arg}
+      {Plug.Cowboy, scheme: :http, plug: ArchethicPrice.Router, options: [port: 3000]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

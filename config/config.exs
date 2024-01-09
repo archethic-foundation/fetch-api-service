@@ -3,6 +3,7 @@ import Config
 # The Unified Cryptoasset ID (UCID) assigns a unique ID to each cryptoasset
 # to minimize any confusion that may arise from assets that share identical tickers/symbols.
 config :archethic_price,
+  api_port: 3000,
   ucids: %{
     uco: 6887,
     matic: 3890,

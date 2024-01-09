@@ -7,16 +7,11 @@ defmodule ArchethicPrice.Provider.CoinMarketCapTest do
   alias ArchethicPrice.Provider.CoinMarketCap
 
   describe "get_current/1" do
-    test "empty list of currency should return a valid empty response" do
+    test "empty list should return an empty response" do
       assert {:ok, %{}} = CoinMarketCap.get_current([])
     end
 
-    test "invalid currency should return an error" do
-      assert {:error, :invalid_currency} = CoinMarketCap.get_current([:unknown])
-      assert {:error, :invalid_currency} = CoinMarketCap.get_current([:unknown, :eth, :bitcoin])
-    end
-
-    test "valid currency should return a valid response" do
+    test "should return a OK response" do
       assert {:ok, map} = CoinMarketCap.get_current([:eth])
       assert [:eth] = Map.keys(map)
       assert Enum.all?(Map.values(map), &is_float/1)
@@ -33,7 +28,7 @@ defmodule ArchethicPrice.Provider.CoinMarketCapTest do
       assert [:uco] = Map.keys(map)
       assert Enum.all?(Map.values(map), &is_float/1)
       assert {:ok, map} = CoinMarketCap.get_current([:eth, :matic, :bitcoin, :bnb, :uco])
-      assert Enum.all?(Map.keys(map), &ArchethicPrice.valid_currency/1)
+      assert 5 = map_size(map)
       assert Enum.all?(Map.values(map), &is_float/1)
     end
   end

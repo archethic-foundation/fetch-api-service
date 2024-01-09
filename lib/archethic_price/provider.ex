@@ -1,10 +1,8 @@
 defmodule ArchethicPrice.Provider do
   @moduledoc false
 
-  @callback get_current(list(ArchethicPrice.currency())) ::
-              {:ok,
-               %{
-                 ArchethicPrice.currency() => float()
-               }}
-              | {:error, atom()}
+  alias ArchethicPrice.Currency
+
+  @callback get_current(list(Currency.t())) ::
+              {:ok, %{Currency.t() => float()}} | {:error, String.t()}
 end

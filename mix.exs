@@ -25,6 +25,7 @@ defmodule ArchethicPrice.MixProject do
       {:mint, "~> 1.5"},
       {:jason, "~> 1.4"},
       {:exjsonpath, "~> 0.9.0"},
+      {:plug_cowboy, "~> 2.6"},
 
       # dev
       {:credo, "~> 1.7", runtime: false},

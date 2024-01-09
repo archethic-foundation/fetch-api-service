@@ -1,33 +1,39 @@
 defmodule ArchethicPrice.Provider.CoinMarketCap do
   @moduledoc false
 
-  @behaviour ArchethicPrice.Provider
+  alias ArchethicPrice.Currency
+  alias ArchethicPrice.Provider
+
+  @behaviour Provider
 
   @config Application.compile_env!(:archethic_price, __MODULE__)
 
-  @spec get_current(list(ArchethicPrice.currency())) ::
-          {:ok, %{ArchethicPrice.currency() => float()}}
-          | {:error, :invalid_currency}
+  @doc """
+  Return the latest quotes of given currencies on this provider
+  """
+  @spec get_current(list(Currency.t())) ::
+          {:ok, %{Currency.t() => float()}} | {:error, String.t()}
   def get_current(currencies) do
-    with true <- ArchethicPrice.valid_currencies(currencies),
-         ucids <- currencies_to_ucids(currencies),
-         {:ok, prices_by_ucid} <- fetch_current(ucids) do
-      {:ok, convert_ucids_to_currencies(prices_by_ucid)}
-    else
-      false ->
-        {:error, :invalid_currency}
+    ucids = currencies_to_ucids(currencies)
+
+    case fetch_current(ucids) do
+      {:ok, prices_by_ucid} ->
+        {:ok, convert_ucids_to_currencies(prices_by_ucid)}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
   defp currencies_to_ucids(currencies) do
     currencies
-    |> Enum.map(&ArchethicPrice.currency_to_ucid/1)
+    |> Enum.map(&Currency.to_ucid/1)
   end
 
   defp convert_ucids_to_currencies(map) do
     map
     |> Enum.map(fn {ucid, usd_price} ->
-      {ArchethicPrice.ucid_to_currency(ucid), usd_price}
+      {Currency.from_ucid(ucid), usd_price}
     end)
     |> Enum.into(%{})
   end
@@ -44,6 +50,31 @@ defmodule ArchethicPrice.Provider.CoinMarketCap do
          {:ok, %{body: body, status: 200}} <- stream_response(conn),
          {:ok, response} <- Jason.decode(body) do
       {:ok, extract_quotes_from_response(response, ucids)}
+    else
+      # connect errors
+      {:error, error = %Mint.TransportError{}} ->
+        {:error, Exception.message(error)}
+
+      {:error, error = %Mint.HTTPError{}} ->
+        {:error, Exception.message(error)}
+
+      # request errors
+      {:error, _conn, error = %Mint.TransportError{}} ->
+        {:error, Exception.message(error)}
+
+      {:error, _conn, error = %Mint.HTTPError{}} ->
+        {:error, Exception.message(error)}
+
+      # stream errors
+      {:error, _conn, error = %Mint.TransportError{}, _responses} ->
+        {:error, Exception.message(error)}
+
+      {:error, _conn, error = %Mint.HTTPError{}, _responses} ->
+        {:error, Exception.message(error)}
+
+      # jason
+      {:error, %Jason.DecodeError{}} ->
+        {:error, "provider returned an invalid json"}
     end
   end
 
@@ -91,16 +122,14 @@ defmodule ArchethicPrice.Provider.CoinMarketCap do
                   %{acc1 | done: true}
               end)
 
-            cond do
-              acc2.done ->
-                {:ok, %{status: acc2.status, body: Enum.join(acc2.data)}}
-
-              true ->
-                stream_response(conn, acc2)
+            if acc2.done do
+              {:ok, %{status: acc2.status, body: Enum.join(acc2.data)}}
+            else
+              stream_response(conn, acc2)
             end
 
-          {:error, _, reason, _} ->
-            {:error, reason}
+          {:error, conn, reason, responses} ->
+            {:error, conn, reason, responses}
         end
     end
   end
