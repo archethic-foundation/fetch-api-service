@@ -20,8 +20,18 @@ defmodule ArchethicFAS.Quotes.Cache do
   @spec get_latest() :: {:ok, %{Currency.t() => float()}} | {:error, String.t()}
   def get_latest() do
     case :ets.lookup(@table, :latest) do
-      [{:latest, value}] -> value
-      [] -> {:error, "Value not cached yet"}
+      [{:latest, value}] ->
+        value
+
+      [] ->
+        case hydrate() do
+          {:ok, value} ->
+            value
+
+          {:error, reason} ->
+            Logger.warning("Hydrating failed: #{inspect(reason)}")
+            {:error, "Value not cached yet"}
+        end
     end
   end
 
