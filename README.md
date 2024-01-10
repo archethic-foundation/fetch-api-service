@@ -23,7 +23,7 @@ Providers requested:
 
 Return the latest available quotes from given cryptocurrencies. The result is an aggregate of multiple providers.
 
-`GET /v2/cryptocurrency/quotes/latest?currency=eth,bitcoin,matic,uco,bnb`
+`GET /api/v1/quotes/latest?currency=uco,bitcoin,bnb,matic,eth`
 
 ```json
 {
