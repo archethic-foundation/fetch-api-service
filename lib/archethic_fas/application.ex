@@ -7,8 +7,10 @@ defmodule ArchethicFAS.Application do
 
   @impl true
   def start(_type, _args) do
+    port = Application.fetch_env!(:archethic_fas, :api_port)
+
     children = [
-      {Plug.Cowboy, scheme: :http, plug: ArchethicFAS.Router, options: [port: 3000]},
+      {Plug.Cowboy, scheme: :http, plug: ArchethicFAS.Router, options: [port: port]},
       ArchethicFAS.Quotes.Supervisor
     ]
 
