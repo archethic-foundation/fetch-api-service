@@ -25,23 +25,25 @@ defmodule ArchethicFAS.Quotes.Cache do
     end
   end
 
+  def hydrate do
+    GenServer.call(__MODULE__, :hydrate)
+  end
+
   def init([]) do
     :ets.new(@table, [:named_table, :set, :public])
 
     {:ok, :no_state}
   end
 
-  def handle_info(:hydrate, state) do
+  def handle_call(:hydrate, _from, state) do
     case Quotes.fetch_latest(Currency.list()) do
       {:ok, result} ->
         :ets.insert(@table, {:latest, {:ok, result}})
+        {:reply, {:ok, result}, state}
 
-      {:error, reason} ->
-        Logger.warning("Hydrating failed: #{inspect(reason)}")
-
-        :ets.insert(@table, {:latest, {:error, reason}})
+      {:error, _reason} = e ->
+        :ets.delete(@table, :latest)
+        {:reply, e, state}
     end
-
-    {:noreply, state}
   end
 end

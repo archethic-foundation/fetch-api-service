@@ -18,7 +18,7 @@ defmodule ArchethicFAS.Quotes.Scheduler do
   end
 
   def handle_info(:tick, state) do
-    send(Cache, :hydrate)
+    Cache.hydrate()
 
     Process.send_after(self(), :tick, 60_000)
     {:noreply, state}
