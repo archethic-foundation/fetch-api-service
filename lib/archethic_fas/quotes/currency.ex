@@ -1,4 +1,4 @@
-defmodule ArchethicFAS.Currency do
+defmodule ArchethicFAS.Quotes.Currency do
   @moduledoc """
   Everything related to currency
   """
@@ -6,6 +6,14 @@ defmodule ArchethicFAS.Currency do
   @ucids Application.compile_env!(:archethic_fas, :ucids)
 
   @type t :: :eth | :bnb | :matic | :bitcoin | :uco
+
+  @doc """
+  Return all handled currencies
+  """
+  @spec list() :: list(t())
+  def list() do
+    Map.keys(@ucids)
+  end
 
   @doc """
   Transform a string into a currency

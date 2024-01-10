@@ -1,8 +1,8 @@
-defmodule ArchethicFAS.CurrencyTest do
-  alias ArchethicFAS.Currency
+defmodule ArchethicFAS.Quotes.CurrencyTest do
+  alias ArchethicFAS.Quotes.Currency
 
   use ExUnit.Case
-  doctest ArchethicFAS
+  doctest Currency
 
   describe "cast/1" do
     test "should return ok for known currencies" do
