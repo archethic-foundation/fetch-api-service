@@ -5,7 +5,7 @@ defmodule ArchethicFAS.Quotes.Currency do
 
   @ucids Application.compile_env!(:archethic_fas, :ucids)
 
-  @type t :: :eth | :bnb | :matic | :bitcoin | :uco
+  @type t :: :eth | :bnb | :matic | :btc | :uco
 
   @doc """
   Return all handled currencies
@@ -22,7 +22,7 @@ defmodule ArchethicFAS.Quotes.Currency do
   def cast("eth"), do: {:ok, :eth}
   def cast("bnb"), do: {:ok, :bnb}
   def cast("matic"), do: {:ok, :matic}
-  def cast("bitcoin"), do: {:ok, :bitcoin}
+  def cast("btc"), do: {:ok, :btc}
   def cast("uco"), do: {:ok, :uco}
   def cast(_), do: :error
 

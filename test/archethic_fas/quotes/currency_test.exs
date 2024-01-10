@@ -9,7 +9,7 @@ defmodule ArchethicFAS.Quotes.CurrencyTest do
       assert {:ok, :eth} = Currency.cast("eth")
       assert {:ok, :bnb} = Currency.cast("bnb")
       assert {:ok, :matic} = Currency.cast("matic")
-      assert {:ok, :bitcoin} = Currency.cast("bitcoin")
+      assert {:ok, :btc} = Currency.cast("btc")
       assert {:ok, :uco} = Currency.cast("uco")
     end
 
