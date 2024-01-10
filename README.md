@@ -22,6 +22,7 @@ Providers requested:
 ### Latest
 
 Return the latest available quotes from given cryptocurrencies. The result is an aggregate of multiple providers.
+**The values are cached for an entire minute.**
 
 `GET /api/v1/quotes/latest?currency=uco,bitcoin,bnb,matic,eth`
 
