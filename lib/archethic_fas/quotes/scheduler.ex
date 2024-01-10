@@ -1,6 +1,6 @@
 defmodule ArchethicFAS.Quotes.Scheduler do
   @moduledoc """
-  Responsible of calling MFA every N ms
+  Responsible of hydrating the cache each minute
   """
 
   alias ArchethicFAS.Quotes.Cache
