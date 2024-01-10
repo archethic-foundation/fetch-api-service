@@ -8,7 +8,7 @@ config :archethic_fas,
     uco: 6887,
     matic: 3890,
     bnb: 1839,
-    bitcoin: 1,
+    btc: 1,
     eth: 1027
   }
 
