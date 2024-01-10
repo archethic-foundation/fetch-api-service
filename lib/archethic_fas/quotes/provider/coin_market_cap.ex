@@ -47,7 +47,8 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
 
     with {:ok, conn} <- Mint.HTTP.connect(:https, conf(:endpoint), 443, opts),
          {:ok, conn, _} <- Mint.HTTP.request(conn, "GET", path, headers(), nil),
-         {:ok, %{body: body, status: 200}} <- stream_response(conn),
+         {:ok, conn, %{body: body, status: 200}} <- stream_response(conn),
+         {:ok, _} <- Mint.HTTP.close(conn),
          {:ok, response} <- Jason.decode(body) do
       {:ok, extract_quotes_from_response(response, ucids)}
     else
@@ -123,7 +124,7 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
               end)
 
             if acc2.done do
-              {:ok, %{status: acc2.status, body: Enum.join(acc2.data)}}
+              {:ok, conn, %{status: acc2.status, body: Enum.join(acc2.data)}}
             else
               stream_response(conn, acc2)
             end
