@@ -3,6 +3,10 @@
 An API server that provides various off-chain resources.
 Such as cryptocurrencies prices.
 
+## Envs
+
+- ARCHETHIC_CMC_PRO_API_KEY: An API key for the CoinMarketCap provider
+
 ## Quotes
 
 Cryptocurrencies handled:
