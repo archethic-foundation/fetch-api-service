@@ -1,7 +1,7 @@
 # ArchethicFrontApiServer
 
 An API server that provides various off-chain resources.
-Such as cryptocurrencies prices.
+Such as cryptoassets prices.
 
 ## Envs
 
@@ -9,13 +9,14 @@ Such as cryptocurrencies prices.
 
 ## Quotes
 
-Cryptocurrencies handled:
+Cryptoassets are identified by [Unified Cryptoasset ID (UCID)](https://support.coinmarketcap.com/hc/en-us/articles/20092704479515).
+Available cryptoassets in this API:
 
-- bitcoin
-- bnb
-- eth
-- matic
-- uco
+- uco:      6887
+- matic:    3890
+- bnb:      1839
+- btc:      1
+- eth:      1027
 - ... more later
 
 Providers requested:
@@ -25,17 +26,17 @@ Providers requested:
 
 ### Latest
 
-Return the latest available quotes from given cryptocurrencies. The result is an aggregate of multiple providers.
+Return the latest available quotes from given cryptoassets. The result is an aggregate of multiple providers.
 **The values are cached for an entire minute.**
 
-`GET /api/v1/quotes/latest?currency=uco,bitcoin,bnb,matic,eth`
+`GET /api/v1/quotes/latest?ucids=6887,1,1027,3890,1839`
 
 ```json
 {
-  "bitcoin":46886.44559469423,
-  "bnb":301.88655780971703,
-  "eth":2263.032408397367,
-  "matic":0.790940929057782,
-  "uco":0.04767200156279931
+  "1": 46886.44559469423,
+  "1839": 301.88655780971703,
+  "1027": 2263.032408397367,
+  "3890": 0.790940929057782,
+  "6887": 0.04767200156279931
 }
 ```

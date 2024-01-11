@@ -1,8 +1,8 @@
 defmodule ArchethicFAS.Quotes.Provider do
   @moduledoc false
 
-  alias ArchethicFAS.Quotes.Currency
+  alias ArchethicFAS.Quotes.UCID
 
-  @callback fetch_latest(list(Currency.t())) ::
-              {:ok, %{Currency.t() => float()}} | {:error, String.t()}
+  @callback fetch_latest(list(UCID.t())) ::
+              {:ok, %{UCID.t() => float()}} | {:error, String.t()}
 end

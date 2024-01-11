@@ -1,7 +1,7 @@
 defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
   @moduledoc false
 
-  alias ArchethicFAS.Quotes.Currency
+  alias ArchethicFAS.Quotes.UCID
   alias ArchethicFAS.Quotes.Provider
 
   @behaviour Provider
@@ -11,36 +11,11 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
   @doc """
   Return the latest quotes of given currencies on this provider
   """
-  @spec fetch_latest(list(Currency.t())) ::
-          {:ok, %{Currency.t() => float()}} | {:error, String.t()}
-  def fetch_latest(currencies) do
-    ucids = currencies_to_ucids(currencies)
+  @spec fetch_latest(list(UCID.t())) ::
+          {:ok, %{UCID.t() => float()}} | {:error, String.t()}
+  def fetch_latest([]), do: {:ok, %{}}
 
-    case do_fetch_latest(ucids) do
-      {:ok, prices_by_ucid} ->
-        {:ok, convert_ucids_to_currencies(prices_by_ucid)}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
-
-  defp currencies_to_ucids(currencies) do
-    currencies
-    |> Enum.map(&Currency.to_ucid/1)
-  end
-
-  defp convert_ucids_to_currencies(map) do
-    map
-    |> Enum.map(fn {ucid, usd_price} ->
-      {Currency.from_ucid(ucid), usd_price}
-    end)
-    |> Enum.into(%{})
-  end
-
-  defp do_fetch_latest([]), do: {:ok, %{}}
-
-  defp do_fetch_latest(ucids) do
+  def fetch_latest(ucids) do
     query = URI.encode_query(%{id: Enum.join(ucids, ",")})
     path = "/v2/cryptocurrency/quotes/latest?#{query}"
     opts = [transport_opts: conf(:transport_opts, [])]

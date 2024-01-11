@@ -4,7 +4,7 @@ defmodule ArchethicFAS.Quotes.Cache do
   """
 
   alias ArchethicFAS.Quotes
-  alias ArchethicFAS.Quotes.Currency
+  alias ArchethicFAS.Quotes.UCID
 
   use GenServer
   require Logger
@@ -17,20 +17,14 @@ defmodule ArchethicFAS.Quotes.Cache do
     GenServer.start_link(__MODULE__, opts, name: __MODULE__)
   end
 
-  @spec get_latest() :: {:ok, %{Currency.t() => float()}} | {:error, String.t()}
+  @spec get_latest() :: {:ok, %{UCID.t() => float()}} | {:error, String.t()}
   def get_latest() do
     case :ets.lookup(@table, :latest) do
       [{:latest, value}] ->
-        value
+        {:ok, value}
 
       [] ->
-        case hydrate() do
-          {:ok, value} ->
-            value
-
-          {:error, _reason} ->
-            {:error, "Value not cached yet"}
-        end
+        hydrate()
     end
   end
 
@@ -45,9 +39,9 @@ defmodule ArchethicFAS.Quotes.Cache do
   end
 
   def handle_call(:hydrate, _from, state) do
-    case Quotes.fetch_latest(Currency.list()) do
+    case Quotes.fetch_latest(UCID.list()) do
       {:ok, result} ->
-        :ets.insert(@table, {:latest, {:ok, result}})
+        :ets.insert(@table, {:latest, result})
         {:reply, {:ok, result}, state}
 
       e = {:error, reason} ->
