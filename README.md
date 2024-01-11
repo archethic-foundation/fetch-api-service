@@ -1,7 +1,6 @@
-# ArchethicFrontApiServer
+# Archethic FetchApiService (FAS)
 
-An API server that provides various off-chain resources.
-Such as cryptoassets prices.
+An API server that exposes various off-chain resources such as cryptoassets prices.
 
 ## Envs
 
