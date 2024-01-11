@@ -28,8 +28,7 @@ defmodule ArchethicFAS.Quotes.Cache do
           {:ok, value} ->
             value
 
-          {:error, reason} ->
-            Logger.warning("Hydrating failed: #{inspect(reason)}")
+          {:error, _reason} ->
             {:error, "Value not cached yet"}
         end
     end
@@ -51,7 +50,8 @@ defmodule ArchethicFAS.Quotes.Cache do
         :ets.insert(@table, {:latest, {:ok, result}})
         {:reply, {:ok, result}, state}
 
-      {:error, _reason} = e ->
+      e = {:error, reason} ->
+        Logger.warning("Hydrating failed: #{inspect(reason)}")
         :ets.delete(@table, :latest)
         {:reply, e, state}
     end
