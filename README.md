@@ -26,7 +26,7 @@ Providers requested:
 ### Latest
 
 Return the latest available quotes from given cryptoassets. The result is an aggregate of multiple providers.
-**The values are cached for an entire minute.**
+**The values are cached for a few minutes.**
 
 `GET /api/v1/quotes/latest?ucids=6887,1,1027,3890,1839`
 

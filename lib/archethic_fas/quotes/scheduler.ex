@@ -1,6 +1,6 @@
 defmodule ArchethicFAS.Quotes.Scheduler do
   @moduledoc """
-  Responsible of hydrating the cache each minute
+  Responsible of hydrating the cache every few minutes
   """
 
   alias ArchethicFAS.Quotes.Cache
@@ -20,7 +20,7 @@ defmodule ArchethicFAS.Quotes.Scheduler do
   def handle_info(:tick, state) do
     Cache.hydrate()
 
-    Process.send_after(self(), :tick, 60_000)
+    Process.send_after(self(), :tick, Application.fetch_env!(:archethic_fas, :schedule_interval))
     {:noreply, state}
   end
 end
