@@ -5,6 +5,7 @@ An API server that exposes various off-chain resources such as cryptoassets pric
 ## Envs
 
 - ARCHETHIC_CMC_PRO_API_KEY: An API key for the CoinMarketCap provider
+- ARCHETHIC_FAS_PORT: The listening HTTP port
 
 ## Quotes
 
