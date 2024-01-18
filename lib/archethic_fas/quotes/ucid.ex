@@ -1,8 +1,6 @@
 defmodule ArchethicFAS.Quotes.UCID do
   @moduledoc false
 
-  @ucids Application.compile_env!(:archethic_fas, :ucids)
-
   @type t :: pos_integer()
 
   @doc """
@@ -10,6 +8,6 @@ defmodule ArchethicFAS.Quotes.UCID do
   """
   @spec list() :: list(t())
   def list() do
-    @ucids
+    Application.fetch_env!(:archethic_fas, :ucids)
   end
 end

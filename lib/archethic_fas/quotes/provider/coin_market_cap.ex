@@ -6,8 +6,6 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
 
   @behaviour Provider
 
-  @config Application.compile_env!(:archethic_fas, __MODULE__)
-
   @doc """
   Return the latest quotes of given currencies on this provider
   """
@@ -71,11 +69,15 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
   end
 
   defp conf(key) do
-    Keyword.fetch!(@config, key)
+    case conf(key, nil) do
+      nil -> raise "Missing config #{key}"
+      value -> value
+    end
   end
 
   defp conf(key, default) do
-    Keyword.get(@config, key, default)
+    config = Application.get_env(:archethic_fas, __MODULE__, [])
+    Keyword.get(config, key, default)
   end
 
   defp stream_response(conn, acc0 \\ %{status: 0, data: [], done: false}) do
