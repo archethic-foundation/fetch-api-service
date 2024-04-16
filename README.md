@@ -12,11 +12,12 @@ An API server that exposes various off-chain resources such as cryptoassets pric
 Cryptoassets are identified by [Unified Cryptoasset ID (UCID)](https://support.coinmarketcap.com/hc/en-us/articles/20092704479515).
 Available cryptoassets in this API:
 
-- uco:      6887
-- matic:    3890
-- bnb:      1839
-- btc:      1
-- eth:      1027
+- uco: 6887
+- matic: 3890
+- bnb: 1839
+- btc: 1
+- eth: 1027
+- usdc: 3408
 - ... more later
 
 Providers requested:

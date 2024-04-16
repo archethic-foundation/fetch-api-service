@@ -15,7 +15,9 @@ config :archethic_fas,
     # btc
     1,
     # eth
-    1027
+    1027,
+    # usdc
+    3408
   ]
 
 import_config("#{Mix.env()}.exs")
