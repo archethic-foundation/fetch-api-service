@@ -41,3 +41,10 @@ Return the latest available quotes from given cryptoassets. The result is an agg
   "6887": 0.04767200156279931
 }
 ```
+
+## Upgrade
+
+```bash
+MIX_ENV=prod mix release
+service archethic-fas restart
+```
