@@ -1,9 +1,9 @@
-defmodule ArchethicFAS.Quotes.Provider.CoinMarketCapTest do
+defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCapTest do
   @moduledoc """
   These tests are running on the sandbox-api from CMC.
   Real HTTP queries are done.
   """
-  alias ArchethicFAS.Quotes.Provider.CoinMarketCap
+  alias ArchethicFAS.QuotesLatest.Provider.CoinMarketCap
 
   use ExUnit.Case
   doctest CoinMarketCap
