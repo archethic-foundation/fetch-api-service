@@ -1,29 +1,32 @@
-defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
+defmodule ArchethicFAS.QuotesHistorical.Provider.Coingecko do
   @moduledoc false
 
-  alias ArchethicFAS.Quotes.UCID
-  alias ArchethicFAS.Quotes.Provider
+  alias ArchethicFAS.QuotesHistorical.Provider
 
   @behaviour Provider
 
   @doc """
-  Return the latest quotes of given currencies on this provider
+  Return the historical quotes of given currency on this provider for a range of time
   """
-  @spec fetch_latest(list(UCID.t())) ::
-          {:ok, %{UCID.t() => float()}} | {:error, String.t()}
-  def fetch_latest([]), do: {:ok, %{}}
+  @spec fetch_history(coin :: String.t(), from :: DateTime.t(), to :: DateTime.t()) ::
+          {:ok, map()} | {:error, String.t()}
+  def fetch_history(coin, from, to) do
+    query =
+      URI.encode_query(%{
+        vs_currency: "usd",
+        from: DateTime.to_unix(from),
+        to: DateTime.to_unix(to)
+      })
 
-  def fetch_latest(ucids) do
-    query = URI.encode_query(%{id: Enum.join(ucids, ",")})
-    path = "/v2/cryptocurrency/quotes/latest?#{query}"
+    path = "/api/v3/coins/#{coin}/market_chart/range?#{query}"
     opts = [transport_opts: conf(:transport_opts, [])]
 
-    with {:ok, conn} <- Mint.HTTP.connect(:https, conf(:endpoint), 443, opts),
+    with {:ok, conn} <- Mint.HTTP.connect(:https, "api.coingecko.com", 443, opts),
          {:ok, conn, _} <- Mint.HTTP.request(conn, "GET", path, headers(), nil),
          {:ok, conn, %{body: body, status: 200}} <- stream_response(conn),
          {:ok, _} <- Mint.HTTP.close(conn),
          {:ok, response} <- Jason.decode(body) do
-      {:ok, extract_quotes_from_response(response, ucids)}
+      {:ok, response}
     else
       # connect errors
       {:error, error = %Mint.TransportError{}} ->
@@ -49,35 +52,28 @@ defmodule ArchethicFAS.Quotes.Provider.CoinMarketCap do
       # jason
       {:error, %Jason.DecodeError{}} ->
         {:error, "provider returned an invalid json"}
+
+      {:ok, %Mint.HTTP2{}, %{status: 429}} ->
+        {:error, "provider reach limit"}
     end
-  end
-
-  defp extract_quotes_from_response(res, ucids) do
-    ucids
-    |> Enum.map(fn ucid ->
-      {:ok, [usd_price]} = ExJSONPath.eval(res, "$.data['#{ucid}'].quote.USD.price")
-      {ucid, usd_price}
-    end)
-    |> Enum.into(%{})
-  end
-
-  defp headers() do
-    [
-      {"X-CMC_PRO_API_KEY", conf(:key)},
-      {"Accept", "application/json"}
-    ]
   end
 
   defp conf(key) do
-    case conf(key, nil) do
-      nil -> raise "Missing config #{key}"
-      value -> value
+      case conf(key, nil) do
+        nil -> raise "Missing config #{key}"
+        value -> value
+      end
     end
-  end
 
   defp conf(key, default) do
     config = Application.get_env(:archethic_fas, __MODULE__, [])
     Keyword.get(config, key, default)
+  end
+
+  defp headers() do
+    [
+      {"x-cg-demo-api-key", conf(:key)}
+    ]
   end
 
   defp stream_response(conn, acc0 \\ %{status: 0, data: [], done: false}) do
