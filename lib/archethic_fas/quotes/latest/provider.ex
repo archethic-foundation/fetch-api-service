@@ -1,4 +1,4 @@
-defmodule ArchethicFAS.Quotes.Provider do
+defmodule ArchethicFAS.QuotesLatest.Provider do
   @moduledoc false
 
   alias ArchethicFAS.Quotes.UCID

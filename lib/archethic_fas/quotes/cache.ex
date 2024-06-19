@@ -24,30 +24,81 @@ defmodule ArchethicFAS.Quotes.Cache do
         {:ok, value}
 
       [] ->
-        hydrate()
+        hydrate_latest()
     end
   end
 
-  def hydrate do
-    GenServer.call(__MODULE__, :hydrate)
+  @spec get_history(UCID.t(), Interval.t()) :: {:ok, map()} | {:error, String.t()}
+  def get_history(ucid, interval) do
+    case :ets.lookup(@table, {:history, ucid, interval}) do
+      [{_, values}] ->
+        {:ok, values}
+
+      [] ->
+        hydrate_history(ucid, interval)
+    end
+  end
+
+  def hydrate_latest do
+    GenServer.call(__MODULE__, :hydrate_latest)
+  end
+
+  def hydrate_history(ucdi, interval) do
+    GenServer.call(__MODULE__, {:hydrate_history, ucdi, interval})
   end
 
   def init([]) do
     :ets.new(@table, [:named_table, :set, :public])
 
-    {:ok, :no_state}
+    {:ok, %{tasks: %{}}}
   end
 
-  def handle_call(:hydrate, _from, state) do
-    case Quotes.fetch_latest(UCID.list()) do
-      {:ok, result} ->
-        :ets.insert(@table, {:latest, result})
-        {:reply, {:ok, result}, state}
+  def handle_call(:hydrate_latest, from, state) do
+    %Task{ref: t_ref} = Task.async(fn -> Quotes.fetch_latest(UCID.list()) end)
 
-      e = {:error, reason} ->
-        Logger.warning("Hydrating failed: #{inspect(reason)}")
-        :ets.delete(@table, :latest)
-        {:reply, e, state}
+    new_state =
+      state
+      |> Map.update!(
+        :tasks,
+        &Map.put(&1, t_ref, {:latest, from})
+      )
+
+    {:noreply, new_state}
+  end
+
+  def handle_call({:hydrate_history, ucid, interval}, from, state) do
+    Logger.debug("hydrate #{UCID.name(ucid)} for #{interval} interval")
+
+    %Task{ref: t_ref} = Task.async(fn -> Quotes.fetch_history(ucid, interval) end)
+
+    new_state =
+      state
+      |> Map.update!(
+        :tasks,
+        &Map.put(&1, t_ref, {{:history, ucid, interval}, from})
+      )
+
+    {:noreply, new_state}
+  end
+
+  def handle_info({ref, data}, state = %{tasks: tasks}) do
+    case Map.pop(tasks, ref) do
+      {nil, _} ->
+        {:noreply, state}
+
+      {{key, from}, tasks} ->
+        case data do
+          {:ok, result} ->
+            :ets.insert(@table, {key, result})
+
+          _ ->
+            :ets.delete(@table, key)
+        end
+
+        GenServer.reply(from, data)
+        {:noreply, %{state | tasks: tasks}}
     end
   end
+
+  def handle_info({:DOWN, _ref, :process, _pid, _reason}, state), do: {:noreply, state}
 end

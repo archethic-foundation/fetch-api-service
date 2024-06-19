@@ -2,7 +2,8 @@ defmodule ArchethicFAS.Quotes.Supervisor do
   @moduledoc false
 
   alias ArchethicFAS.Quotes.Cache
-  alias ArchethicFAS.Quotes.Scheduler
+  alias ArchethicFAS.QuotesLatest.Supervisor, as: QuotesLatestSupervisor
+  alias ArchethicFAS.QuotesHistorical.Supervisor, as: QuotesHistoricalSupervisor
 
   use Supervisor
 
@@ -13,7 +14,8 @@ defmodule ArchethicFAS.Quotes.Supervisor do
   def init(_args) do
     children = [
       Cache,
-      Scheduler
+      QuotesLatestSupervisor,
+      QuotesHistoricalSupervisor
     ]
 
     Supervisor.init(children, strategy: :one_for_one)
