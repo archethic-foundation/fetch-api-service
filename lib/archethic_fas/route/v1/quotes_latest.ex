@@ -45,7 +45,7 @@ defmodule ArchethicFAS.Route.V1.QuotesLatest do
          |> Map.get("ucids", "")
          |> String.split(",")
          |> Enum.map(&String.trim/1) do
-      [""] -> {:error, :missing_ucids_parameter}
+      [""] -> {:ok, Application.fetch_env!(:archethic_fas, :ucids)}
       strs -> strings_to_integers(strs)
     end
   end
