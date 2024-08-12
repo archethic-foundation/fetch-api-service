@@ -19,7 +19,9 @@ config :archethic_fas,
     # usdc
     3408,
     # monerium eure
-    20920
+    20920,
+    # usdt
+    825
   ]
 
 import_config("#{Mix.env()}.exs")

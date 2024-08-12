@@ -19,6 +19,7 @@ Available cryptoassets in this API:
 - eth: 1027
 - usdc: 3408
 - eure: 20920
+- usdt: 825
 - ... more later
 
 Providers requested:
