@@ -21,7 +21,9 @@ config :archethic_fas,
     # monerium eure
     20920,
     # usdt
-    825
+    825,
+    # bnb
+    1839
   ]
 
 import_config("#{Mix.env()}.exs")
