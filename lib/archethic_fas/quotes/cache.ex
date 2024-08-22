@@ -43,8 +43,8 @@ defmodule ArchethicFAS.Quotes.Cache do
     GenServer.call(__MODULE__, :hydrate_latest)
   end
 
-  def hydrate_history(ucdi, interval) do
-    GenServer.call(__MODULE__, {:hydrate_history, ucdi, interval})
+  def hydrate_history(ucid, interval) do
+    GenServer.call(__MODULE__, {:hydrate_history, ucid, interval})
   end
 
   def init([]) do
