@@ -15,36 +15,29 @@ defmodule ArchethicFAS.QuotesHistorical.Scheduler do
   end
 
   def init(_opts) do
-    [next | remaining] = Interval.list()
-    send(self(), {:tick, next})
-    {:ok, %{remaining: remaining}}
+    # to avoid API restriction we do one operation per minute
+    :timer.send_interval(:timer.minutes(1), self(), :tick)
+    :timer.send_interval(:timer.hours(1), self(), :tick_hour)
+    :timer.send_interval(:timer.hours(24), self(), :tick_day)
+
+    {:ok, %{remaining: Interval.list()}}
   end
 
-  def handle_info({:tick, interval}, state = %{remaining: []}) do
-    [next | remaining] = Interval.list()
-
-    Process.send_after(
-      self(),
-      {:tick, next},
-      Application.fetch_env!(:archethic_fas, __MODULE__) |> Keyword.fetch!(:schedule_interval)
-    )
-
-    hydrate(interval)
-
-    {:noreply, %{state | remaining: remaining}}
+  def handle_info(:tick, state = %{remaining: []}) do
+    {:noreply, state}
   end
 
-  def handle_info({:tick, interval}, state = %{remaining: [next | remaining]}) do
-    Process.send_after(
-      self(),
-      {:tick, next},
-      Application.fetch_env!(:archethic_fas, __MODULE__)
-      |> Keyword.fetch!(:schedule_interval)
-    )
-
+  def handle_info(:tick, %{remaining: [interval | rest]}) do
     hydrate(interval)
+    {:noreply, %{remaining: rest}}
+  end
 
-    {:noreply, %{state | remaining: remaining}}
+  def handle_info(:tick_hour, %{remaining: remaining}) do
+    {:noreply, %{remaining: [:hourly, :daily | remaining]}}
+  end
+
+  def handle_info(:tick_day, %{remaining: remaining}) do
+    {:noreply, %{remaining: [:weekly, :biweekly, :monthly, :bimonthly, :yearly | remaining]}}
   end
 
   defp hydrate(interval) do

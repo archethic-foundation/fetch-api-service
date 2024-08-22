@@ -23,7 +23,4 @@ config :archethic_fas,
 
 config :archethic_fas, ArchethicFAS.QuotesLatest.Scheduler, schedule_interval: :timer.minutes(5)
 
-config :archethic_fas, ArchethicFAS.QuotesHistorical.Scheduler,
-  schedule_interval: :timer.minutes(1)
-
 import_config("#{Mix.env()}.exs")
