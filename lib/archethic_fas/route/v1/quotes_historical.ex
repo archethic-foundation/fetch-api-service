@@ -4,7 +4,7 @@ defmodule ArchethicFAS.Route.V1.QuotesHistorical do
   """
   alias ArchethicFAS.QuotesHistorical.Interval
   alias ArchethicFAS.Quotes
-  alias ArchethicFAS.Quotes.UCID
+  alias ArchethicFAS.UCID
 
   require Logger
   import Plug.Conn

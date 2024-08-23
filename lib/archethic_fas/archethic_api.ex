@@ -1,29 +1,37 @@
-defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCap do
-  @moduledoc false
+defmodule ArchethicFAS.ArchethicApi do
+  @spec call_contract_function(String.t(), String.t(), list()) :: {:ok, any()} | {:error, atom()}
+  def call_contract_function(address, function, args) do
+    body =
+      %{
+        "jsonrpc" => "2.0",
+        "method" => "contract_fun",
+        "id" => 1,
+        "params" => %{
+          "contract" => address,
+          "function" => function,
+          "args" => args
+        }
+      }
+      |> Jason.encode!()
 
-  alias ArchethicFAS.UCID
-  alias ArchethicFAS.QuotesLatest.Provider
-
-  @behaviour Provider
-
-  @doc """
-  Return the latest quotes of given currencies on this provider
-  """
-  @spec fetch_latest(list(UCID.t())) ::
-          {:ok, %{UCID.t() => float()}} | {:error, String.t()}
-  def fetch_latest([]), do: {:ok, %{}}
-
-  def fetch_latest(ucids) do
-    query = URI.encode_query(%{id: Enum.join(ucids, ",")})
-    path = "/v2/cryptocurrency/quotes/latest?#{query}"
+    path = "/api/rpc"
     opts = [transport_opts: conf(:transport_opts, [])]
 
     with {:ok, conn} <- Mint.HTTP.connect(:https, conf(:endpoint), 443, opts),
-         {:ok, conn, _} <- Mint.HTTP.request(conn, "GET", path, headers(), nil),
+         {:ok, conn, _} <- Mint.HTTP.request(conn, "POST", path, headers(), body),
          {:ok, conn, %{body: body, status: 200}} <- stream_response(conn),
          {:ok, _} <- Mint.HTTP.close(conn),
          {:ok, response} <- Jason.decode(body) do
-      {:ok, extract_quotes_from_response(response, ucids)}
+      cond do
+        Map.has_key?(response, "result") ->
+          {:ok, response["result"]}
+
+        Map.has_key?(response, "error") ->
+          {:error, response["error"]}
+
+        true ->
+          {:error, "non json-rpc response"}
+      end
     else
       # connect errors
       {:error, error = %Mint.TransportError{}} ->
@@ -52,19 +60,10 @@ defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCap do
     end
   end
 
-  defp extract_quotes_from_response(res, ucids) do
-    ucids
-    |> Enum.map(fn ucid ->
-      {:ok, [usd_price]} = ExJSONPath.eval(res, "$.data['#{ucid}'].quote.USD.price")
-      {ucid, usd_price}
-    end)
-    |> Enum.into(%{})
-  end
-
   defp headers() do
     [
-      {"X-CMC_PRO_API_KEY", conf(:key)},
-      {"Accept", "application/json"}
+      {"Accept", "application/json"},
+      {"Content-Type", "application/json"}
     ]
   end
 

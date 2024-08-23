@@ -59,11 +59,11 @@ defmodule ArchethicFAS.QuotesHistorical.Provider.Coingecko do
   end
 
   defp conf(key) do
-      case conf(key, nil) do
-        nil -> raise "Missing config #{key}"
-        value -> value
-      end
+    case conf(key, nil) do
+      nil -> raise "Missing config #{key}"
+      value -> value
     end
+  end
 
   defp conf(key, default) do
     config = Application.get_env(:archethic_fas, __MODULE__, [])
