@@ -3,7 +3,7 @@ defmodule ArchethicFAS.QuotesHistorical.Scheduler do
   Responsible of hydrating the cache every scheduling interval
   """
 
-  alias ArchethicFAS.Quotes.UCID
+  alias ArchethicFAS.UCID
   alias ArchethicFAS.Quotes.Cache
   alias ArchethicFAS.QuotesHistorical.Interval
 

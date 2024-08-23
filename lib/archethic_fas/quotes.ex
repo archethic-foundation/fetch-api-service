@@ -4,10 +4,10 @@ defmodule ArchethicFAS.Quotes do
   """
 
   alias __MODULE__.Cache
-  alias __MODULE__.UCID
+  alias ArchethicFAS.UCID
   alias ArchethicFAS.QuotesHistorical.Interval
-  alias ArchethicFAS.QuotesLatest.Provider.CoinMarketCap
   alias ArchethicFAS.QuotesHistorical.Provider.Coingecko
+  alias ArchethicFAS.QuotesLatest.Provider.CoinMarketCap
 
   @doc """
   Return the latest quotes of given cryptoassets.
@@ -54,7 +54,7 @@ defmodule ArchethicFAS.Quotes do
           {:ok, map()} | {:error, String.t()}
   def fetch_history(ucid, interval) do
     ucid
-    |> UCID.name()
+    |> UCID.to_coingecko()
     |> Coingecko.fetch_history(
       Interval.get_datetime(interval),
       DateTime.utc_now()

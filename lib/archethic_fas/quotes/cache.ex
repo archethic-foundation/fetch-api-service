@@ -4,7 +4,8 @@ defmodule ArchethicFAS.Quotes.Cache do
   """
 
   alias ArchethicFAS.Quotes
-  alias ArchethicFAS.Quotes.UCID
+  alias ArchethicFAS.UCID
+  alias ArchethicFAS.QuotesHistorical.Interval
 
   use GenServer
   require Logger
@@ -54,6 +55,7 @@ defmodule ArchethicFAS.Quotes.Cache do
   end
 
   def handle_call(:hydrate_latest, from, state) do
+    Logger.debug("hydrate latest quotes")
     %Task{ref: t_ref} = Task.async(fn -> Quotes.fetch_latest(UCID.list()) end)
 
     new_state =
@@ -67,7 +69,7 @@ defmodule ArchethicFAS.Quotes.Cache do
   end
 
   def handle_call({:hydrate_history, ucid, interval}, from, state) do
-    Logger.debug("hydrate #{UCID.name(ucid)} for #{interval} interval")
+    Logger.debug("hydrate #{UCID.to_coingecko(ucid)} for #{interval} interval")
 
     %Task{ref: t_ref} = Task.async(fn -> Quotes.fetch_history(ucid, interval) end)
 

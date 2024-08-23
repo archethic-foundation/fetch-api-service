@@ -21,7 +21,6 @@ Available cryptoassets in this API:
 - usdc: 3408
 - eure: 20920
 - usdt: 825
-- bnb: 1839
 - ... more later
 
 Providers requested:
@@ -54,6 +53,7 @@ The result is a list of pairs `[timestamp, value]`.
 **The values are cached for a few minutes.**
 
 Available intervals:
+
 - "hourly"
 - "daily"
 - "weekly"

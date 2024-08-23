@@ -6,6 +6,7 @@ defmodule ArchethicFAS.Router do
 
   get("/api/v1/quotes/latest", to: ArchethicFAS.Route.V1.QuotesLatest)
   get("/api/v1/quotes/history", to: ArchethicFAS.Route.V1.QuotesHistorical)
+  get("/api/v1/aeswap/tvl", to: ArchethicFAS.Route.V1.AESwapTVL)
 
   match _ do
     send_resp(conn, 404, "Not found")
