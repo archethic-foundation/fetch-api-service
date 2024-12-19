@@ -84,6 +84,24 @@ Available intervals:
 }
 ```
 
+### Balances
+
+#### Genesis pools 
+
+Return the balance for each genesis pools. Balance is returned as an integer (1 UCO = 100_000_000)
+
+`GET /api/v1/balances/genesispools`
+
+```json
+{
+  "000012023D76D65F4A20E563682522576963E36789897312CB6623FDF7914B60ECEF":{
+    "initial":14589803300000000,
+    "current":14557794560345716
+  },
+  ...
+}
+```
+
 ## Upgrade
 
 ```bash
