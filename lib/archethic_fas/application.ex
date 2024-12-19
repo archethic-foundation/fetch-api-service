@@ -15,7 +15,8 @@ defmodule ArchethicFAS.Application do
     children = [
       {Plug.Cowboy, scheme: :http, plug: ArchethicFAS.Router, options: [port: port]},
       ArchethicFAS.Quotes.Supervisor,
-      ArchethicFAS.AESwap.Supervisor
+      ArchethicFAS.AESwap.Supervisor,
+      ArchethicFAS.Balances.Supervisor
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
