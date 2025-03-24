@@ -14,6 +14,11 @@ defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCap do
   def fetch_latest([]), do: {:ok, %{}}
 
   def fetch_latest(ucids) do
+    {replaced_ucids, ucids} = Enum.split_with(ucids, &UCID.replaced?/1)
+
+    ucids =
+      replaced_ucids |> Enum.map(&UCID.get_replaced_by/1) |> Enum.concat(ucids) |> Enum.uniq()
+
     query = URI.encode_query(%{id: Enum.join(ucids, ",")})
     path = "/v2/cryptocurrency/quotes/latest?#{query}"
     opts = [transport_opts: conf(:transport_opts, [])]
@@ -23,7 +28,10 @@ defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCap do
          {:ok, conn, %{body: body, status: 200}} <- stream_response(conn),
          {:ok, _} <- Mint.HTTP.close(conn),
          {:ok, response} <- Jason.decode(body) do
-      {:ok, extract_quotes_from_response(response, ucids)}
+      quotes =
+        response |> extract_quotes_from_response(ucids) |> insert_replaced_quotes(replaced_ucids)
+
+      {:ok, quotes}
     else
       # connect errors
       {:error, error = %Mint.TransportError{}} ->
@@ -59,6 +67,15 @@ defmodule ArchethicFAS.QuotesLatest.Provider.CoinMarketCap do
       {ucid, usd_price}
     end)
     |> Enum.into(%{})
+  end
+
+  defp insert_replaced_quotes(quotes, replaced_ucids) do
+    Map.new(replaced_ucids, fn replaced_ucid ->
+      replacement_ucid = UCID.get_replaced_by(replaced_ucid)
+      quote = Map.fetch!(quotes, replacement_ucid)
+      {replaced_ucid, quote}
+    end)
+    |> Map.merge(quotes)
   end
 
   defp headers() do

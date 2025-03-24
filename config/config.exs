@@ -32,7 +32,13 @@ config :archethic_fas,
     },
     %{
       ucid: 3890,
-      coingecko: "matic-network",
+      replaced_by: 28321,
+      coingecko: "pol-ex-matic",
+      archethic: nil
+    },
+    %{
+      ucid: 28321,
+      coingecko: "polygon",
       archethic: nil
     },
     %{

@@ -20,10 +20,6 @@ defmodule ArchethicFAS.Route.V1.QuotesLatest do
       |> put_resp_content_type("application/json")
       |> send_resp(200, Jason.encode!(quotes))
     else
-      {:error, :missing_ucids_parameter} ->
-        conn
-        |> send_resp(400, "Bad request: missing ucids parameter")
-
       {:error, {:invalid_ucid, str}} ->
         conn
         |> send_resp(400, "Bad request: invalid ucid: #{str}")

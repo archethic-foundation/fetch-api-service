@@ -59,4 +59,24 @@ defmodule ArchethicFAS.UCID do
       conf -> conf.ucid
     end)
   end
+
+  @doc """
+  Return true if the ucid is replaced by another
+  """
+  @spec replaced?(ucid :: t()) :: boolean()
+  def replaced?(ucid) do
+    Application.fetch_env!(:archethic_fas, :coins)
+    |> Enum.find(&(&1.ucid == ucid))
+    |> Map.has_key?(:replaced_by)
+  end
+
+  @doc """
+  Get the ucid which replaced the given one
+  """
+  @spec get_replaced_by(ucid :: t()) :: boolean()
+  def get_replaced_by(ucid) do
+    Application.fetch_env!(:archethic_fas, :coins)
+    |> Enum.find(&(&1.ucid == ucid))
+    |> Map.fetch!(:replaced_by)
+  end
 end
